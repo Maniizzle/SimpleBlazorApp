@@ -1,4 +1,5 @@
-﻿using BethanysPieShopHRM.Shared;
+﻿using BethanysPieShopHRM.ComponentsLibrary.Map;
+using BethanysPieShopHRM.Shared;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace BethanysPieShopHRM.App.Pages
         [Parameter]
         public string EmployeeId { get; set; }
         public Employee Employee { get; set; } = new Employee();
+        public List<Marker> MapMarkers { get; set; } = new List<Marker>();
 
         protected override Task OnInitializedAsync()
         {
@@ -21,7 +23,10 @@ namespace BethanysPieShopHRM.App.Pages
             InitializeEmployees();
 
             Employee = Employees.FirstOrDefault(e => e.EmployeeId == int.Parse(EmployeeId));
-
+            MapMarkers = new List<Marker>
+            {
+                new Marker{Description=$"{Employee.FirstName} {Employee.LastName}", ShowPopup=false, X=Employee.Latitude, Y=Employee.Longitude}
+            };
 
             return base.OnInitializedAsync();
         }

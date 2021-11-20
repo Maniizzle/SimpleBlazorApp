@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\leaflet\images\layers-2x.png" />
+    <Content Remove="wwwroot\leaflet\images\layers.png" />
+    <Content Remove="wwwroot\leaflet\images\marker-icon-2x.png" />
+    <Content Remove="wwwroot\leaflet\images\marker-icon.png" />
+    <Content Remove="wwwroot\leaflet\images\marker-shadow.png" />
+    <Content Remove="wwwroot\leaflet\leaflet.css" />
+    <Content Remove="wwwroot\leaflet\leaflet.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
@@ -15,7 +25,46 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BethanysPieShopHRM.ComponentsLibrary\BethanysPieShopHRM.ComponentsLibrary.csproj" />
     <ProjectReference Include="..\BethanysPieShopHRM.Shared\BethanysPieShopHRM.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\leaflet\images\layers-2x.png" />
+    <None Include="wwwroot\leaflet\images\layers.png" />
+    <None Include="wwwroot\leaflet\images\marker-icon-2x.png" />
+    <None Include="wwwroot\leaflet\images\marker-icon.png" />
+    <None Include="wwwroot\leaflet\images\marker-shadow.png" />
+    <None Include="wwwroot\leaflet\leaflet.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\leaflet\leaflet.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <Target Name="CopyMissingBlazorContent" BeforeTargets="BlazorCompleteStandalonePublish">
+    <PropertyGroup>
+      <FullPublishDir>$(PublishDir)</FullPublishDir>
+      <FullPublishDir Condition=" $(FullPublishDir.Contains(':')) != 'true' ">$(MSBuildThisFileDirectory)$(PublishDir)</FullPublishDir>
+    </PropertyGroup>
+
+    <Message Text="PublishIntermediateOutputPath: $(PublishIntermediateOutputPath)" Importance="high" />
+    <Message Text="OutDir: $(OutDir)" Importance="high" />
+    <Message Text="BlazorPublishDistDir: $(BlazorPublishDistDir)" Importance="High" />
+    <Message Text="PublishDir: $(PublishDir)" Importance="High" />
+    <Message Text="FullPublishDir: $(FullPublishDir)" Importance="High" />
+
+    <CreateItem Include="$(FullPublishDir)wwwroot\**\*.*">
+      <Output TaskParameter="Include" ItemName="FilesToCopy" />
+    </CreateItem>
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(FullPublishDir)$(BlazorPublishDistDir)%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+    <RemoveDir Directories="$(FullPublishDir)wwwroot" />
+    <Delete Files="$(FullPublishDir)$(BlazorPublishDistDir)**\*.map" />
+  </Target>
+  
 </Project>
